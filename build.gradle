@@ -1,0 +1,67 @@
+buildscript {
+    ext {
+        springBootVersion = "2.0.0.M7"
+    }
+    repositories {
+        mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://repo.spring.io/snapshot" }
+        maven { url "https://repo.spring.io/milestone" }
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+        classpath "org.springframework:springloaded:1.2.8.RELEASE"
+        classpath "gradle.plugin.org.kravemir.gradle.sass:GradleSassPlugin:1.2.2"
+    }
+}
+
+plugins {
+    id "com.palantir.jacoco-coverage" version "0.4.0"
+}
+apply plugin: "java"
+apply plugin: "org.springframework.boot"
+apply plugin: "org.kravemir.gradle.sass"
+apply plugin: "jacoco"
+apply plugin: "idea"
+sass {
+    main {
+        srcDir = file("$projectDir/src/main/scss")
+        outDir = file("$buildDir/resources/main/static")
+
+        outSubDir = "css"
+        registerInSourceSets("main")
+        minify = true
+    }
+}
+
+group 'pl.uj.jwzp'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven { url "https://repo.spring.io/snapshot" }
+    maven { url "https://repo.spring.io/milestone" }
+}
+
+dependencies {
+    compile group: "org.springframework.boot", name: "spring-boot-devtools", version: springBootVersion
+    compile group: "org.springframework.boot", name: "spring-boot-starter-thymeleaf", version: springBootVersion
+    compile group: "org.springframework.boot", name: "spring-boot-starter-web", version: springBootVersion
+
+    compileOnly group: "org.projectlombok", name: "lombok", version: "1.16.20"
+    testCompile group: "org.springframework.boot", name: "spring-boot-starter-test", version: springBootVersion
+}
+
+idea {
+    module {
+        inheritOutputDirs = false
+        outputDir = file("$buildDir/classes/java/main/")
+    }
+}
+test {
+    reports {
+        html.enabled = true
+    }
+}
