@@ -1,0 +1,1 @@
+web: java -Dserver.port=$PORT $JAVA_OPTS -jar api/build/libs/allegro-1.0-SNAPSHOT.jar
