@@ -11,16 +11,19 @@ buildscript {
 }
 
 plugins {
+    id "java"
+    id "jacoco"
     id "com.palantir.jacoco-coverage" version "0.4.0"
     id "io.ratpack.ratpack-groovy" version "1.5.4"
 }
-apply plugin: "java"
-apply plugin: "org.springframework.boot"
-apply plugin: "jacoco"
-apply plugin: "idea"
+
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
 
 group 'pl.uj.jwzp'
 version '1.0-SNAPSHOT'
+
+mainClassName = "pl.uj.jwzp.launchers.SpringLauncher"
 
 sourceCompatibility = 1.8
 
@@ -46,13 +49,6 @@ dependencies {
     compile ratpack.dependency("hikari")
 }
 
-idea {
-    module {
-        inheritOutputDirs = false
-        outputDir = file("$buildDir/classes/java/main/")
-    }
-}
-
 test {
     reports {
         html.enabled = true
@@ -60,5 +56,6 @@ test {
 }
 
 task stage {
+    dependsOn bootJar
     dependsOn installDist
 }
