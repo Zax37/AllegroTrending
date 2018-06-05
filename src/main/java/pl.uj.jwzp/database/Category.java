@@ -1,7 +1,9 @@
 package pl.uj.jwzp.database;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Value;
 import lombok.experimental.Tolerate;
 
 import javax.persistence.*;
@@ -15,10 +17,10 @@ public class Category implements Serializable {
     @Id
     String id;
     String name;
-    String parentId;
-    @Transient
+    @ManyToOne
     Category parent;
-    @Transient
+    @ElementCollection
+    @ManyToMany
     List<Category> children;
     boolean leaf;
 
@@ -26,8 +28,16 @@ public class Category implements Serializable {
     public Category() {
     }
 
-    @Override
-    public String toString() {
-        return id;
+    @AllArgsConstructor
+    @Value
+    public class FrontendContext {
+        String id;
+        String name;
+        boolean leaf;
+    }
+
+    @Transient
+    public FrontendContext getFrontendContext() {
+        return new FrontendContext(id, name, leaf);
     }
 }
