@@ -3,23 +3,43 @@ package pl.uj.jwzp.allegro;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import pl.uj.jwzp.config.AllegroProperties;
+import pl.uj.jwzp.util.UrlJoiner;
 
 import java.util.Collections;
+import java.util.Map;
 
 @Component
 public class APIRequest<Ret> {
-    public static final String API_KEY = "6d87282e";
-    public static final MediaType ACCEPTS = new MediaType("application", "vnd.allegro.public.v1+json");
-    public static final String URL_BASE = "https://api.allegro.pl.allegrosandbox.pl/";
+    private MediaType ACCEPTS = AllegroMediaType.ALLEGRO_PUBLIC_JSON;
+    private AllegroProperties allegroProperties;
+    private UrlJoiner urlJoiner;
 
-    public Ret get(String url, Class<Ret> cls) {
+    public APIRequest(
+            AllegroProperties allegroProperties,
+            UrlJoiner urlJoiner
+    ) {
+        this.allegroProperties = allegroProperties;
+        this.urlJoiner = urlJoiner;
+    }
+
+    public Ret get(String url, Class<Ret> cls, Map<String, ?> params) {
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(ACCEPTS));
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<Ret> response = restTemplate.exchange(URL_BASE + url, HttpMethod.GET, entity, cls);
+        String endpoint = urlJoiner.join(allegroProperties.getRestUrl(), url);
+
+        ResponseEntity<Ret> response = restTemplate.exchange(
+                endpoint,
+                HttpMethod.GET,
+                entity,
+                cls,
+                params
+        );
+
         return response.getBody();
     }
 }
