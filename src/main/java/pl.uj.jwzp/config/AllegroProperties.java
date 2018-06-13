@@ -10,7 +10,9 @@ import org.springframework.stereotype.Component;
 public class AllegroProperties {
     String pageUrl;
     String restUrl;
+    String wsdlUrl;
     String apiKey;
     String clientId;
     String clientSecret;
+    Integer countryId;
 }
