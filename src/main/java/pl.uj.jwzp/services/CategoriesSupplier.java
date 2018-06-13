@@ -1,4 +1,4 @@
-package pl.uj.jwzp.controllers;
+package pl.uj.jwzp.services;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +17,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@RestController
 public class CategoriesSupplier {
     private static final String ROOT_ID = "954b95b6-43cf-4104-8354-dea4d9b10ddf";
     private static final String CATEGORY_URL_BASE = "categories/{id}";
@@ -112,10 +111,7 @@ public class CategoriesSupplier {
         ROOT_CATEGORY = getWithChildrenSynchro(ROOT_ID);
     }
 
-    @RequestMapping(value = "/categories", method = RequestMethod.GET)
-    public List<Category.FrontendContext> getCategories(
-            @RequestParam Optional<String> parentId
-    ) {
+    public List<Category.FrontendContext> getCategoriesInFrontendContext(Optional<String> parentId) {
         Category parent = parentId.isPresent() ? getWithChildrenSynchro(parentId.get()) : ROOT_CATEGORY;
         return parent.getChildren()
                 .parallelStream()
