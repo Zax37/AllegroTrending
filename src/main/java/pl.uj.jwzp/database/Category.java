@@ -1,12 +1,16 @@
 package pl.uj.jwzp.database;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Value;
 import lombok.experimental.Tolerate;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.List;
 
@@ -19,8 +23,7 @@ public class Category implements Serializable {
     String name;
     @ManyToOne
     Category parent;
-    @ElementCollection
-    @ManyToMany
+    @OneToMany(mappedBy="parent", fetch = FetchType.EAGER)
     List<Category> children;
     boolean leaf;
 
@@ -28,7 +31,6 @@ public class Category implements Serializable {
     public Category() {
     }
 
-    @AllArgsConstructor
     @Value
     public class FrontendContext {
         String id;
