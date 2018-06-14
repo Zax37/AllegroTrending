@@ -2,14 +2,16 @@ package pl.uj.jwzp.controllers;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
-import pl.uj.jwzp.config.AllegroProperties;
-import pl.uj.jwzp.config.ApplicationProperties;
+import org.springframework.web.servlet.view.RedirectView;
+import pl.uj.jwzp.properties.AllegroProperties;
+import pl.uj.jwzp.properties.ApplicationProperties;
+import pl.uj.jwzp.security.AccessedByAuthorizedNotBanned;
 import pl.uj.jwzp.services.AuthService;
 import pl.uj.jwzp.util.UrlJoiner;
 
-import java.rmi.RemoteException;
 import java.util.Optional;
 
 @RestController
@@ -32,18 +34,23 @@ public class AuthorizationController {
 
     }
 
+    @AccessedByAuthorizedNotBanned
+    @RequestMapping("/dashboard")
+    @ResponseBody
+    public String test() {
+        return "ok";
+    }
+
     @RequestMapping("/")
-    public ModelAndView redirect(
+    public RedirectView authRedirect(
             @RequestParam Optional<String> code
-    ) throws RemoteException {
-        if (code.isPresent()) {
-            String token = authService.getAccessTokenFromCode(code.get());
-            String login = authService.getUserLoginFromAccessToken(token);
-            ModelAndView ret = new ModelAndView("code");
-            ret.getModelMap().addAttribute("login", login);
-            return ret;
-        } else {
-            return new ModelAndView("redirect:" + AUTH_URL);
-        }
+    ) {
+        code.ifPresent(c -> authService.authorizeWithCode(c));
+        return new RedirectView("/dashboard");
+    }
+
+    @RequestMapping("/login")
+    public ModelAndView loginRedirect() {
+        return new ModelAndView("redirect:" + AUTH_URL);
     }
 }

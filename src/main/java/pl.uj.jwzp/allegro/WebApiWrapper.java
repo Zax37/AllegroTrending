@@ -3,7 +3,7 @@ package pl.uj.jwzp.allegro;
 import com.allegro.webapi.ServicePort_PortType;
 import com.allegro.webapi.ServiceServiceLocator;
 import org.springframework.stereotype.Component;
-import pl.uj.jwzp.config.AllegroProperties;
+import pl.uj.jwzp.properties.AllegroProperties;
 
 import javax.xml.rpc.ServiceException;
 

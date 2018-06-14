@@ -1,4 +1,4 @@
-package pl.uj.jwzp.config;
+package pl.uj.jwzp.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

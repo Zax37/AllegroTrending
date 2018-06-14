@@ -1,10 +1,6 @@
 package pl.uj.jwzp.services;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 import pl.uj.jwzp.allegro.APIRequest;
 import pl.uj.jwzp.allegro.CategoriesResponse;
 import pl.uj.jwzp.database.CategoriesRepository;
@@ -117,5 +113,9 @@ public class CategoriesSupplier {
                 .parallelStream()
                 .map(Category::getFrontendContext)
                 .collect(Collectors.toList());
+    }
+
+    public Category getSingleCategoryById(String parentId) {
+        return getExistingOrCreateWithoutChildren(parentId);
     }
 }

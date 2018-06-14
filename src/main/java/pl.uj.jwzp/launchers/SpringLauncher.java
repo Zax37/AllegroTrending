@@ -5,8 +5,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import pl.uj.jwzp.config.AllegroProperties;
-import pl.uj.jwzp.config.ApplicationProperties;
+import pl.uj.jwzp.properties.AllegroProperties;
+import pl.uj.jwzp.properties.ApplicationProperties;
 
 @SpringBootApplication(scanBasePackages = "pl.uj.jwzp")
 @EnableJpaRepositories("pl.uj.jwzp.database")
