@@ -35,7 +35,23 @@ repositories {
     mavenCentral()
 }
 
+jacoco {
+    toolVersion = "0.8.0"
+}
+
+jacocoTestReport {
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: ['pl/uj/jwzp/allegro', 'pl/uj/jwzp/database', 'pl/uj/jwzp/properties'])
+        })
+    }
+}
+
 dependencies {
+    compile 'ch.qos.logback:logback-classic:1.2.3'
+    compile 'ch.qos.logback.contrib:logback-json-classic:0.1.5'
+    compile 'ch.qos.logback.contrib:logback-jackson:0.1.5'
+
     runtime group: "org.postgresql", name: "postgresql", version: "42.2.1"
     compile group: "com.h2database", name: "h2", version: "1.4.196"
     compile group: "org.springframework.boot", name: "spring-boot-devtools", version: springBootVersion
@@ -51,6 +67,17 @@ dependencies {
     compile ratpack.dependency("hikari")
 
     compile project(':allegro-webapi')
+
+    testCompile(
+            //JUnit
+            'junit:junit:4.12',
+
+            //Rich asserting: AssertJ
+            'org.assertj:assertj-core:3.9.0',
+
+            //Mocks: Mockito
+            'org.mockito:mockito-core:2.8.9'
+    )
 }
 
 test {
@@ -63,3 +90,5 @@ task stage {
     dependsOn bootJar
     dependsOn installDist
 }
+
+build.dependsOn(tasks.jacocoTestReport)

@@ -7,6 +7,10 @@ version = '0.0.8'
 
 description = "Copy of ${group}:${project.name}, customized by Zax37"
 
+test {
+    exclude "**"
+}
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 tasks.withType(JavaCompile) {

@@ -1,5 +1,6 @@
 package pl.uj.jwzp.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pl.uj.jwzp.allegro.APIRequest;
 import pl.uj.jwzp.allegro.CategoriesResponse;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class CategoriesSupplier {
     private static final String ROOT_ID = "954b95b6-43cf-4104-8354-dea4d9b10ddf";
@@ -48,6 +50,7 @@ public class CategoriesSupplier {
     private Category getExistingOrCreateWithoutChildren(String id) {
         Optional<Category> category = categoriesRepository.findById(id);
         if (category.isPresent()) {
+            log.trace("Category with id " + id + " found in db.");
             return category.get();
         } else {
             CategoriesResponse.Category categoryResponse =
@@ -77,6 +80,7 @@ public class CategoriesSupplier {
         if (cat.isLeaf() || (cat.getChildren() != null && !cat.getChildren().isEmpty())) {
             return cat;
         } else {
+            log.trace("Children of category with id " + id + " not found. Getting them from AllegroAPI.");
             List<Category> children = new ArrayList<>();
             CategoriesResponse categoriesResponse =
                     apiRequestMultiple.get(
@@ -104,6 +108,7 @@ public class CategoriesSupplier {
         this.apiRequestSingle = apiRequestSingle;
         this.apiRequestMultiple = apiRequestMultiple;
 
+        log.trace("Creating allegro root category.");
         ROOT_CATEGORY = getWithChildrenSynchro(ROOT_ID);
     }
 

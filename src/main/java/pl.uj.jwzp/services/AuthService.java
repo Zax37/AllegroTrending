@@ -4,6 +4,7 @@ import com.allegro.webapi.DoGetUserLoginRequest;
 import com.allegro.webapi.DoGetUserLoginResponse;
 import com.allegro.webapi.DoLoginWithAccessTokenRequest;
 import com.allegro.webapi.DoLoginWithAccessTokenResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -31,6 +32,7 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Collections;
 
+@Slf4j
 @Service
 public class AuthService {
     private AllegroProperties allegroProperties;
@@ -62,6 +64,7 @@ public class AuthService {
     }
 
     public AllegroAuthentication authorizeWithCode(String code) {
+        log.trace("Starting auth process for code: "+code);
         LocalDateTime beforeAuthTime = LocalDateTime.now();
         TokenResponse tokenResponse = getTokenResponseFromCode(code);
         Long allegroId = getUserIdFromAccessToken(tokenResponse.getAccessToken());
@@ -82,6 +85,7 @@ public class AuthService {
                 beforeAuthTime.plusSeconds(tokenResponse.getExpiresIn())
         );
         SecurityContextHolder.getContext().setAuthentication(allegroAuthentication);
+        log.trace("Successfully authenticated user with login: "+login);
 
         return allegroAuthentication;
     }
