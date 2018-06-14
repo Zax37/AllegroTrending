@@ -2,13 +2,11 @@ package pl.uj.jwzp.controllers;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import pl.uj.jwzp.properties.AllegroProperties;
 import pl.uj.jwzp.properties.ApplicationProperties;
-import pl.uj.jwzp.security.AccessedByAuthorizedNotBanned;
 import pl.uj.jwzp.services.AuthService;
 import pl.uj.jwzp.util.UrlJoiner;
 
@@ -34,19 +32,16 @@ public class AuthorizationController {
 
     }
 
-    @AccessedByAuthorizedNotBanned
-    @RequestMapping("/dashboard")
-    @ResponseBody
-    public String test() {
-        return "ok";
-    }
-
     @RequestMapping("/")
     public RedirectView authRedirect(
             @RequestParam Optional<String> code
     ) {
-        code.ifPresent(c -> authService.authorizeWithCode(c));
-        return new RedirectView("/dashboard");
+        if (code.isPresent()) {
+            authService.authorizeWithCode(code.get());
+            return new RedirectView("/dashboard");
+        } else {
+            return new RedirectView("/welcome");
+        }
     }
 
     @RequestMapping("/login")

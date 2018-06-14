@@ -22,6 +22,8 @@ import pl.uj.jwzp.properties.ApplicationProperties;
 import pl.uj.jwzp.security.AccessLevel;
 import pl.uj.jwzp.security.AllegroAuthentication;
 import pl.uj.jwzp.util.UrlJoiner;
+import pl.uj.jwzp.wrappers.AllegroAuthenticationFactory;
+import pl.uj.jwzp.wrappers.RestTemplateFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.rmi.RemoteException;
@@ -32,7 +34,9 @@ import java.util.Collections;
 @Service
 public class AuthService {
     private AllegroProperties allegroProperties;
+    private AllegroAuthenticationFactory authenticationFactory;
     private UsersRepository usersRepository;
+    private RestTemplateFactory restTemplateFactory;
     private WebApiWrapper webApi;
 
     private static final String TOKEN_URL_BASE =
@@ -41,13 +45,17 @@ public class AuthService {
 
     public AuthService(
             AllegroProperties allegroProperties,
+            AllegroAuthenticationFactory authenticationFactory,
             ApplicationProperties applicationProperties,
             UrlJoiner urlJoiner,
             UsersRepository usersRepository,
+            RestTemplateFactory restTemplateFactory,
             WebApiWrapper webApi
     ) {
         this.allegroProperties = allegroProperties;
+        this.authenticationFactory = authenticationFactory;
         this.usersRepository = usersRepository;
+        this.restTemplateFactory = restTemplateFactory;
         this.webApi = webApi;
 
         TOKEN_URL = urlJoiner.join(allegroProperties.getPageUrl(), TOKEN_URL_BASE) + applicationProperties.getUrl();
@@ -69,7 +77,7 @@ public class AuthService {
             return newUser;
         });
 
-        AllegroAuthentication allegroAuthentication = new AllegroAuthentication(
+        AllegroAuthentication allegroAuthentication = authenticationFactory.createSession(
                 user, tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(),
                 beforeAuthTime.plusSeconds(tokenResponse.getExpiresIn())
         );
@@ -79,7 +87,7 @@ public class AuthService {
     }
 
     private TokenResponse getTokenResponseFromCode(String code) {
-        RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = restTemplateFactory.createRestTemplate();
         HttpHeaders headers = new HttpHeaders();
         String creditentials = allegroProperties.getClientId() + ':' + allegroProperties.getClientSecret();
         String encoded = Base64.getEncoder().encodeToString(creditentials.getBytes(StandardCharsets.UTF_8));

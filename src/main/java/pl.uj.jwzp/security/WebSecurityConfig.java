@@ -29,7 +29,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .disable()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/", "/console/**", "/mgmnt/**", "/error/**",
+                .antMatchers("/", "/welcome", "/console/**", "/mgmnt/**", "/error/**",
                         "/css/**", "/fonts/**", "/img/**", "/js/**", "/favicon.ico") // static resources
                 .permitAll()
                 .and()

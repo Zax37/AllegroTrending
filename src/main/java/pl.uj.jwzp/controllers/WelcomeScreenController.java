@@ -7,8 +7,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 public class WelcomeScreenController {
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public ModelAndView getOffers() {
+    @RequestMapping(value = "/welcome", method = RequestMethod.GET)
+    public ModelAndView showWelcome() {
         return new ModelAndView("welcome");
     }
 }
